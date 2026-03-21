@@ -24,8 +24,10 @@
       align-items: center;
       justify-content: center;
       font-family: 'Rajdhani', sans-serif;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
       position: relative;
+      padding-bottom: 40px;
     }
  
     .bg-sphere {
@@ -259,9 +261,11 @@
     }
  
     @media (max-width: 600px) {
-      .options { flex-direction: column; gap: 20px; }
+      .options { flex-direction: column; gap: 20px; align-items: center; }
       .option-card { width: 290px; }
       .header h1 { font-size: 22px; }
+      body { justify-content: flex-start; padding-top: 40px; }
+      .header { margin-bottom: 32px; }
     }
   </style>
 </head>
@@ -320,3 +324,4 @@
   </script>
 </body>
 </html>
+ 
