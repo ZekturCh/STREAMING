@@ -3,314 +3,202 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>La Chutana – Vista Aérea</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <title>CCTC 2026 – Vista Aérea</title>
   <style>
-    :root {
-      --neon: #39FF14;
-      --neon-glow: rgba(57,255,20,0.55);
-      --mil-green: #2d4a1e;
-      --mil-green-dark: #1a2e10;
-      --white: #ffffff;
-      --black: #060606;
-    }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
+    :root {
+      --yellow: #FFE600;
+      --pink:   #FF2B9D;
+      --blue:   #3B3FE8;
+      --blue-light: #7B8CFF;
+      --black:  #050505;
+      --white:  #ffffff;
+    }
     body {
-      background: var(--black);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      font-family: 'Rajdhani', sans-serif;
-      overflow-x: hidden;
+      font-family: Impact, 'Arial Narrow', Arial, sans-serif;
+      background: var(--black);
+      display: flex; flex-direction: column; align-items: center;
+      position: relative;
+      overflow-x: hidden; overflow-y: auto;
+      padding-bottom: 48px;
     }
  
-    .bg-sphere {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    /* FONDO */
+    .bg-image {
+      position: fixed; inset: 0;
+      background: url('bg.webp') center center / cover no-repeat;
+      opacity: 0.42; z-index: 0;
     }
-    .bg-sphere::before {
-      content: '';
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 900px; height: 900px;
-      border-radius: 50%;
-      background: radial-gradient(ellipse at center,
-        rgba(57,255,20,0.14) 0%,
-        rgba(57,255,20,0.04) 40%,
-        transparent 68%);
-      filter: blur(24px);
-      animation: pulse 6s ease-in-out infinite;
-    }
-    @keyframes pulse { 0%,100%{opacity:.9} 50%{opacity:.5} }
- 
-    .grid-lines {
-      position: fixed; inset: 0; z-index: 0;
-      background-image:
-        linear-gradient(rgba(57,255,20,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(57,255,20,0.03) 1px, transparent 1px);
-      background-size: 50px 50px;
-      pointer-events: none;
-    }
-    .scanlines {
-      position: fixed; inset: 0; z-index: 5; pointer-events: none;
-      background: repeating-linear-gradient(
-        to bottom, transparent 0px, transparent 3px,
-        rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px);
+    .bg-overlay {
+      position: fixed; inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.65) 100%);
+      z-index: 1;
     }
  
-    /* TOP BAR */
-    .topbar {
-      position: relative; z-index: 20;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 28px;
-      background: rgba(6,6,6,0.85);
-      border-bottom: 1px solid rgba(57,255,20,0.15);
-      backdrop-filter: blur(12px);
-    }
-    .topbar-left { display: flex; align-items: center; gap: 20px; }
-    .back-btn {
-      font-size: 11px; letter-spacing: 3px; color: rgba(57,255,20,0.5);
-      text-transform: uppercase; text-decoration: none;
-      padding: 7px 14px;
-      border: 1px solid rgba(57,255,20,0.2);
-      border-radius: 2px;
-      transition: all .2s;
-    }
-    .back-btn:hover {
-      color: var(--neon);
-      border-color: rgba(57,255,20,0.5);
-      background: rgba(57,255,20,0.06);
-    }
-    .topbar-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 14px; font-weight: 700; letter-spacing: 4px;
-      color: var(--white); text-transform: uppercase;
-      text-shadow: 0 0 14px var(--neon-glow);
-    }
-    .topbar-right { display: flex; align-items: center; gap: 16px; }
-    .live-badge {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 5px 12px;
-      border: 1px solid rgba(57,255,20,0.4);
-      border-radius: 2px;
-      background: rgba(57,255,20,0.07);
-      font-size: 10px; letter-spacing: 3px;
-      color: var(--neon); text-transform: uppercase;
-    }
-    .live-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--neon);
-      box-shadow: 0 0 7px var(--neon);
-      animation: blink 1.2s ease-in-out infinite;
-    }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
-    .stream-label {
-      font-size: 10px; letter-spacing: 3px;
-      color: rgba(255,255,255,0.35); text-transform: uppercase;
+    /* BLOBS */
+    .blob { position: fixed; border-radius: 50%; filter: blur(60px); z-index: 2; pointer-events: none; }
+    .blob-purple { width: 240px; height: 240px; background: rgba(120,40,200,0.35); bottom: 15%; left: -60px; }
+    .blob-red    { width: 180px; height: 180px; background: rgba(200,30,80,0.3); top: 40%; right: -40px; }
+ 
+    /* HUELLA */
+    .tire-track {
+      position: fixed; bottom: 0; left: 0; right: 0; height: 200px; z-index: 2; pointer-events: none;
+      background: repeating-linear-gradient(-15deg, transparent 0px, transparent 12px, rgba(180,30,100,0.07) 12px, rgba(180,30,100,0.07) 18px);
+      mask-image: linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 100%);
     }
  
-    /* MAIN */
-    .main {
+    /* CONTENIDO */
+    .content {
       position: relative; z-index: 10;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 32px 24px;
+      width: 100%; max-width: 480px;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 36px 20px 0;
     }
  
+    /* LOGOS */
+    .logo-cctc { width: 52%; max-width: 210px; margin-bottom: 5px; }
+    .logo-200  { width: 78%; max-width: 320px; margin-bottom: 10px; }
+    .badge-date {
+      background: var(--yellow); color: var(--black);
+      font-family: Impact, sans-serif; font-size: 13px; letter-spacing: 2px;
+      padding: 5px 20px; border-radius: 4px;
+      margin-bottom: 22px; text-transform: uppercase;
+    }
+ 
+    /* PLAYER BOX — azul */
     .player-wrap {
-      width: 100%; max-width: 1000px;
-      position: relative;
-      animation: fade-in .6s cubic-bezier(.22,1,.36,1) both;
-    }
-    @keyframes fade-in { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
- 
-    .player-frame {
-      position: relative;
-      padding: 3px;
-      background: linear-gradient(145deg, rgba(57,255,20,0.3), rgba(57,255,20,0.05), rgba(57,255,20,0.2));
-      border-radius: 4px;
-      box-shadow:
-        0 0 40px rgba(57,255,20,0.12),
-        0 0 80px rgba(57,255,20,0.06);
-    }
-    .player-frame::before, .player-frame::after {
-      content: '';
-      position: absolute;
-      width: 24px; height: 24px;
-      border-color: var(--neon);
-      border-style: solid;
-      z-index: 2;
-    }
-    .player-frame::before { top: -1px; left: -1px; border-width: 3px 0 0 3px; }
-    .player-frame::after  { bottom: -1px; right: -1px; border-width: 0 3px 3px 0; }
- 
-    .player-inner {
-      position: relative;
       width: 100%;
-      padding-bottom: 56.25%;
-      background: #000;
-      border-radius: 2px;
+      border: 2.5px solid var(--blue-light);
+      border-radius: 22px;
       overflow: hidden;
+      background: #000;
+      box-shadow: 0 0 28px rgba(59,63,232,0.45), 0 0 80px rgba(59,63,232,0.16);
+      position: relative;
+    }
+    .player-inner {
+      position: relative; width: 100%; padding-bottom: 56.25%;
     }
     .player-inner iframe {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      border: none;
+      position: absolute; inset: 0; width: 100%; height: 100%; border: none;
     }
- 
     .no-stream {
       position: absolute; inset: 0;
       display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 14px;
-      background: linear-gradient(145deg, #0a150a, #060606);
+      align-items: center; justify-content: center; gap: 12px;
+      background: rgba(0,0,0,0.85);
     }
-    .no-stream-icon { font-size: 48px; opacity: .4; }
+    .no-stream-icon { font-size: 42px; opacity: .35; }
     .no-stream p {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 12px; letter-spacing: 4px;
-      color: rgba(57,255,20,0.4); text-transform: uppercase;
+      font-family: Arial, sans-serif; font-size: 12px;
+      letter-spacing: 3px; color: rgba(100,120,255,0.5);
+      text-transform: uppercase;
     }
  
-    /* ALTITUDE / DRONE INFO */
-    .info-bar {
-      width: 100%; max-width: 1000px;
-      margin-top: 16px;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 18px;
-      background: rgba(15,25,10,0.7);
-      border: 1px solid rgba(57,255,20,0.12);
-      border-radius: 3px;
-      backdrop-filter: blur(8px);
+    /* CAMBIAR VISTA */
+    .switch-section {
+      width: 100%;
+      display: flex; flex-direction: column; align-items: center;
+      margin-top: 22px; gap: 14px;
     }
-    .info-bar-left { display: flex; align-items: center; gap: 12px; }
-    .cam-icon {
-      width: 34px; height: 34px;
-      border-radius: 50%;
-      background: linear-gradient(145deg, var(--mil-green), var(--mil-green-dark));
-      border: 1.5px solid rgba(255,255,255,0.6);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px;
-      box-shadow: 0 0 12px rgba(57,255,20,0.1);
-    }
-    .info-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 13px; font-weight: 700; letter-spacing: 2px;
-      color: var(--white);
-    }
-    .info-sub {
-      font-size: 11px; letter-spacing: 1px;
-      color: rgba(57,255,20,0.5); margin-top: 2px;
-    }
-    .switch-btn {
-      padding: 9px 18px;
-      background: linear-gradient(145deg, var(--mil-green), var(--mil-green-dark));
-      border: 1.5px solid rgba(255,255,255,0.75);
-      border-radius: 3px;
-      color: var(--white);
-      font-family: 'Orbitron', sans-serif;
-      font-size: 10px; letter-spacing: 2px;
-      text-transform: uppercase; cursor: pointer;
-      text-decoration: none; display: inline-block;
-      box-shadow:
-        0 3px 14px rgba(0,0,0,0.4),
-        0 0 12px rgba(57,255,20,0.08),
-        inset 0 1px 0 rgba(255,255,255,0.1);
-      transition: box-shadow .2s, transform .15s;
-    }
-    .switch-btn:hover {
-      box-shadow:
-        0 5px 20px rgba(0,0,0,0.5),
-        0 0 20px rgba(57,255,20,0.18),
-        inset 0 1px 0 rgba(255,255,255,0.15);
-      transform: translateY(-1px);
+    .switch-label {
+      font-family: Impact, sans-serif;
+      font-size: 20px; letter-spacing: 4px;
+      color: var(--white); text-transform: uppercase;
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.6);
     }
  
-    .footer-tag {
+    /* TOGGLE PILL — dot a la IZQUIERDA = stream2 activo */
+    .toggle-pill {
+      width: 160px; height: 68px;
+      border-radius: 60px;
+      border: 2.5px solid var(--blue-light);
+      background: rgba(0,0,0,0.6);
+      box-shadow: 0 0 20px rgba(59,63,232,0.35);
+      display: flex; align-items: center;
+      padding: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: box-shadow .2s;
+      justify-content: flex-start; /* dot a la izquierda */
+    }
+    .toggle-pill:hover { box-shadow: 0 0 32px rgba(59,63,232,0.55); }
+    .toggle-dot {
+      width: 50px; height: 50px; border-radius: 50%;
+      background: var(--blue-light);
+      box-shadow: 0 0 16px rgba(100,120,255,0.7);
+    }
+ 
+    /* FOOTER IMEKA */
+    .footer-imeka {
       position: relative; z-index: 10;
-      text-align: center; padding: 14px;
-      font-size: 10px; letter-spacing: 3px;
-      color: rgba(57,255,20,0.18); text-transform: uppercase;
+      display: flex; flex-direction: column; align-items: center;
+      margin-top: 32px;
     }
- 
-    @media (max-width: 600px) {
-      .topbar { padding: 10px 14px; }
-      .topbar-title { font-size: 11px; }
-      .info-bar { flex-direction: column; gap: 12px; align-items: flex-start; }
+    .footer-imeka img { width: 110px; opacity: .9; }
+    .footer-sub {
+      font-family: Arial, sans-serif; font-size: 9px;
+      letter-spacing: 3px; color: rgba(255,255,255,0.3);
+      text-transform: uppercase; margin-top: 5px;
     }
   </style>
 </head>
 <body>
  
-  <div class="bg-sphere"></div>
-  <div class="grid-lines"></div>
-  <div class="scanlines"></div>
+  <div class="bg-image"></div>
+  <div class="bg-overlay"></div>
+  <div class="blob blob-purple"></div>
+  <div class="blob blob-red"></div>
+  <div class="tire-track"></div>
  
-  <nav class="topbar">
-    <div class="topbar-left">
-      <a class="back-btn" href="seleccion.html">← Volver</a>
-      <span class="topbar-title">La Chutana</span>
-    </div>
-    <div class="topbar-right">
-      <span class="stream-label">Transmisión 02</span>
-      <div class="live-badge"><span class="live-dot"></span>En vivo</div>
-    </div>
-  </nav>
+  <div class="content">
  
-  <main class="main">
+    <img class="logo-cctc" src="LOGO1.webp"  alt="CCTC 2026"/>
+ 
+    <!-- PLAYER -->
     <div class="player-wrap">
-      <div class="player-frame">
-        <div class="player-inner">
- 
-          <!--
-            ⚠️ REEMPLAZA "TU_VIDEO_ID_DRON" con el ID del stream del dron en YouTube.
-          -->
-          <iframe
-            id="streamFrame"
-            src="https://www.youtube.com/embed/TU_VIDEO_ID_DRON?autoplay=1&rel=0&modestbranding=1"
-            allow="autoplay; fullscreen; picture-in-picture"
-            allowfullscreen
-            title="La Chutana – Vista Aérea Dron">
-          </iframe>
- 
-          <div class="no-stream" id="placeholder">
-            <div class="no-stream-icon">🚁</div>
-            <p>Stream aéreo próximamente</p>
-          </div>
- 
+      <div class="player-inner">
+        <!--
+          ⚠️ REEMPLAZA TU_VIDEO_ID_DRON con el ID del stream del dron en YouTube
+        -->
+        <iframe
+          id="streamFrame"
+          src="https://www.youtube.com/embed/TU_VIDEO_ID_DRON?autoplay=1&rel=0&modestbranding=1"
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowfullscreen
+          title="Vista Aérea Dron">
+        </iframe>
+        <div class="no-stream" id="placeholder">
+          <div class="no-stream-icon">🚁</div>
+          <p>Stream aéreo próximamente</p>
         </div>
       </div>
- 
-      <div class="info-bar">
-        <div class="info-bar-left">
-          <div class="cam-icon">🚁</div>
-          <div>
-            <p class="info-title">Vista Aérea — Dron</p>
-            <p class="info-sub">Perspectiva exclusiva desde las alturas</p>
-          </div>
-        </div>
-        <a class="switch-btn" href="stream1.html">← Vista cámaras</a>
-      </div>
- 
     </div>
-  </main>
  
-  <p class="footer-tag">© La Chutana Racing — Todos los derechos reservados</p>
+    <!-- TOGGLE SWITCH → va a stream1 -->
+    <div class="switch-section">
+      <p class="switch-label">Cambiar Vista</p>
+      <a class="toggle-pill" href="stream1.html">
+        <div class="toggle-dot"></div>
+      </a>
+    </div>
+ 
+  </div>
+ 
+  <div class="footer-imeka">
+    <img src="ilogo.webp" alt="Imeka"/>
+  </div>
  
   <script>
     if (!localStorage.getItem('chutana_user')) {
       window.location.href = 'index.html';
     }
     document.getElementById('streamFrame').addEventListener('load', function() {
-      const src = this.getAttribute('src');
-      if (!src.includes('TU_VIDEO_ID_DRON')) {
+      if (!this.getAttribute('src').includes('TU_VIDEO_ID_DRON')) {
         document.getElementById('placeholder').style.display = 'none';
       }
     });
   </script>
 </body>
 </html>
+ 
