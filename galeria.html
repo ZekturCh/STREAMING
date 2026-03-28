@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Galería del Evento</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --yellow: #FFE600;
+      --yellow-glow: rgba(255, 230, 0, 0.55);
+      --black: #050505;
+      --white: #ffffff;
+      --panel: rgba(0, 0, 0, 0.68);
+      --panel-soft: rgba(255,255,255,0.06);
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Impact, "Arial Narrow", Arial, sans-serif;
+      background: var(--black);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+      padding-bottom: 56px;
+      position: relative;
+    }
+
+    .bg-image {
+      position: fixed;
+      inset: 0;
+      background: url("fondo1.webp") center center / cover no-repeat;
+      opacity: 0.42;
+      z-index: 0;
+    }
+
+    .bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.78) 100%);
+      z-index: 1;
+    }
+
+    .content {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 480px;
+      padding: 24px 16px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .topbar {
+      width: 100%;
+      display: flex;
+      justify-content: flex-start;
+      margin-bottom: 18px;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1.5px solid rgba(255,230,0,0.45);
+      background: rgba(0,0,0,0.58);
+      color: var(--yellow);
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-decoration: none;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 0 22px rgba(255,230,0,0.08);
+      transition: transform .15s, border-color .2s, box-shadow .2s;
+    }
+
+    .btn-back:hover {
+      transform: translateY(-2px);
+      border-color: var(--yellow);
+      box-shadow: 0 0 24px rgba(255,230,0,0.16);
+    }
+
+    .logo-cctc {
+      width: 58%;
+      max-width: 220px;
+      margin-bottom: 10px;
+    }
+
+    .title-box {
+      width: 100%;
+      background: rgba(0,0,0,0.64);
+      border: 2px solid var(--yellow);
+      border-radius: 24px;
+      padding: 22px 18px;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(255,230,0,0.18), 0 0 80px rgba(255,230,0,0.07);
+      backdrop-filter: blur(8px);
+      margin-bottom: 18px;
+    }
+
+    .title-box h1 {
+      font-size: 28px;
+      color: var(--yellow);
+      letter-spacing: 1px;
+      text-shadow: 0 0 16px var(--yellow-glow);
+      margin-bottom: 6px;
+    }
+
+    .title-box p {
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.45;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .gallery-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .photo-card {
+      background: var(--panel);
+      border: 2px solid var(--yellow);
+      border-radius: 24px;
+      padding: 14px;
+      box-shadow:
+        0 0 24px rgba(255,230,0,0.14),
+        inset 0 0 0 1px rgba(255,230,0,0.08);
+      backdrop-filter: blur(8px);
+    }
+
+    .photo-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,230,0,0.35);
+      box-shadow:
+        0 0 20px rgba(255,230,0,0.12),
+        inset 0 0 24px rgba(255,230,0,0.05);
+    }
+
+    .photo-frame img.photo-img,
+    .photo-frame img.overlay-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .photo-frame img.photo-img {
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      background: #111;
+    }
+
+    .photo-frame img.overlay-img {
+      object-fit: cover;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 1;
+    }
+
+    .card-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .btn-download {
+      width: 100%;
+      padding: 14px;
+      background: var(--yellow);
+      color: var(--black);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: Impact, sans-serif;
+      font-size: 18px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 28px rgba(255,230,0,0.24);
+      transition: opacity .2s, transform .15s;
+    }
+
+    .btn-download:hover {
+      opacity: .92;
+      transform: translateY(-2px);
+    }
+
+    .card-meta {
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      color: rgba(255,255,255,0.42);
+      text-align: center;
+      letter-spacing: 0.6px;
+    }
+
+    .status-box {
+      width: 100%;
+      background: rgba(0,0,0,0.58);
+      border: 1.5px solid rgba(255,230,0,0.28);
+      border-radius: 18px;
+      padding: 16px;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      color: rgba(255,255,255,0.72);
+    }
+
+    .footer-imeka {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 28px;
+    }
+
+    .footer-imeka img {
+      width: 220px;
+      opacity: .92;
+    }
+
+    .footer-sub {
+      font-family: Arial, sans-serif;
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      margin-top: 5px;
+    }
+
+    @media (min-width: 600px) {
+      .content {
+        max-width: 540px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-image"></div>
+  <div class="bg-overlay"></div>
+
+  <div class="content">
+    <div class="topbar">
+      <a href="seleccion.html" class="btn-back">← Volver</a>
+    </div>
+
+    <img class="logo-cctc" src="LOGO1.webp" alt="CCTC 2026" />
+
+    <div class="title-box">
+      <h1>Galería del Evento</h1>
+      <p>Explora las fotos capturadas y descarga tu favorita en formato vertical.</p>
+    </div>
+
+    <div id="gallery" class="gallery-grid">
+      <div class="status-box">Cargando fotos...</div>
+    </div>
+  </div>
+
+  <div class="footer-imeka">
+    <img src="ilogo.webp" alt="Imeka" />
+    <div class="footer-sub">Experiencia visual del evento</div>
+  </div>
+
+  <script>
+    const CLOUD_NAME = "dsnptnqil";
+    const FOLDER = "Boda28feb";
+
+    // PNG que irá encima de cada foto ya renderizada.
+    // Déjalo vacío "" si aún no lo usarás.
+    const OVERLAY_PNG = "marco-overlay.png";
+
+    const gallery = document.getElementById("gallery");
+
+    function buildImageUrl(item) {
+      return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/f_auto,q_auto/v${item.version}/${item.public_id}.${item.format}`;
+    }
+
+    // Preview visual tipo 3:4 para la web
+    function buildPreviewUrl(item) {
+      return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/c_fill,ar_3:4,g_auto,f_auto,q_auto/v${item.version}/${item.public_id}.${item.format}`;
+    }
+
+    // Descarga pensada en vertical 9:16 para celular
+    function buildDownloadUrl(item) {
+      return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/c_fill,ar_9:16,g_auto,f_jpg,q_100/fl_attachment/v${item.version}/${item.public_id}.${item.format}`;
+    }
+
+    async function downloadWithOverlay(item) {
+      const baseUrl = buildDownloadUrl(item);
+
+      // Si no quieres overlay todavía, descarga directa.
+      if (!OVERLAY_PNG) {
+        const a = document.createElement("a");
+        a.href = baseUrl;
+        a.download = `${item.public_id}.jpg`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        return;
+      }
+
+      try {
+        const [photoBlob, overlayBlob] = await Promise.all([
+          fetch(baseUrl).then(r => r.blob()),
+          fetch(OVERLAY_PNG).then(r => r.blob())
+        ]);
+
+        const photoBitmap = await createImageBitmap(photoBlob);
+        const overlayBitmap = await createImageBitmap(overlayBlob);
+
+        const canvas = document.createElement("canvas");
+        canvas.width = 1080;
+        canvas.height = 1920;
+
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(photoBitmap, 0, 0, canvas.width, canvas.height);
+        ctx.drawImage(overlayBitmap, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob((finalBlob) => {
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(finalBlob);
+          a.download = `${item.public_id}-final.jpg`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(a.href);
+        }, "image/jpeg", 0.96);
+
+      } catch (error) {
+        console.error(error);
+        alert("No se pudo generar la descarga con overlay.");
+      }
+    }
+
+    function createCard(item) {
+      const card = document.createElement("article");
+      card.className = "photo-card";
+
+      const frame = document.createElement("div");
+      frame.className = "photo-frame";
+
+      const img = document.createElement("img");
+      img.className = "photo-img";
+      img.src = buildPreviewUrl(item);
+      img.alt = "Foto del evento";
+      img.loading = "lazy";
+
+      frame.appendChild(img);
+
+      if (OVERLAY_PNG) {
+        const overlay = document.createElement("img");
+        overlay.className = "overlay-img";
+        overlay.src = OVERLAY_PNG;
+        overlay.alt = "";
+        overlay.loading = "lazy";
+        frame.appendChild(overlay);
+      }
+
+      const actions = document.createElement("div");
+      actions.className = "card-actions";
+
+      const btn = document.createElement("button");
+      btn.className = "btn-download";
+      btn.textContent = "Descargar";
+      btn.onclick = () => downloadWithOverlay(item);
+
+      const meta = document.createElement("div");
+      meta.className = "card-meta";
+      meta.textContent = "Vista previa 3:4 · descarga final 9:16";
+
+      actions.appendChild(btn);
+      actions.appendChild(meta);
+
+      card.appendChild(frame);
+      card.appendChild(actions);
+
+      return card;
+    }
+
+    async function loadGallery() {
+      gallery.innerHTML = `<div class="status-box">Cargando fotos...</div>`;
+
+      try {
+        const response = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${FOLDER}.json`);
+        const data = await response.json();
+
+        if (!data.resources || data.resources.length === 0) {
+          gallery.innerHTML = `<div class="status-box">No hay fotos todavía.</div>`;
+          return;
+        }
+
+        // Más nuevas primero
+        data.resources.sort((a, b) => (b.version || 0) - (a.version || 0));
+
+        gallery.innerHTML = "";
+        data.resources.forEach(item => {
+          gallery.appendChild(createCard(item));
+        });
+
+      } catch (error) {
+        console.error(error);
+        gallery.innerHTML = `<div class="status-box">Error cargando la galería.</div>`;
+      }
+    }
+
+    loadGallery();
+  </script>
+</body>
+</html>
