@@ -94,10 +94,11 @@
     }
  
     /* DOS BOXES LADO A LADO */
-    .boxes-row {
-      display: flex; gap: 16px;
-      width: 100%; justify-content: center;
-    }
+.boxes-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
  
     .stream-box {
       flex: 1; max-width: 200px;
@@ -127,6 +128,20 @@
     .stream-box.blue:hover {
       box-shadow: 0 0 36px rgba(59,63,232,0.6), 0 0 80px rgba(59,63,232,0.22);
     }
+
+    .stream-box.yellow {
+  border: 2.5px solid var(--yellow);
+  box-shadow: 0 0 24px rgba(255,230,0,0.35), 0 0 60px rgba(255,230,0,0.12);
+}
+
+.stream-box.yellow:hover {
+  box-shadow: 0 0 36px rgba(255,230,0,0.55), 0 0 80px rgba(255,230,0,0.2);
+}
+
+.stream-box.yellow .box-label {
+  color: var(--yellow);
+  text-shadow: 0 0 10px rgba(255,230,0,0.5);
+}
  
     /* LABEL ABAJO DEL BOX */
     .box-label {
@@ -188,6 +203,10 @@
       <a class="stream-box blue" href="stream2.html">
         <p class="box-label"><span class="live-dot"></span>Vista Aérea</p>
       </a>
+
+      <a class="stream-box yellow" href="galeria.html">
+  <p class="box-label">📸 Ver Galería</p>
+</a>
  
     </div>
   </div>
